@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import SubEvent from './SubEvent'
+import EventGroup from './EventGroup'
 import styled from 'styled-components'
-import { Icon, Button, Header, Image, Modal } from 'semantic-ui-react'
+import { Icon, Button, Header, Image, Modal, Loader } from 'semantic-ui-react'
 
 import {
     populateEvents,
     selectEvent,
     deselectEvent,
 } from './data/actions/eventActions';
+
+import {
+    toggleLoader
+} from './data/actions/loaderActions';
 
 
 const Container = styled.div`
@@ -27,6 +31,14 @@ const Name = styled.h3`
     color: white;
 `
 
+const ModalHeaderContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+`
+
 export class EventsDashboard extends Component {
     fn = (event) => {
         return new Promise(resolve => {
@@ -36,9 +48,12 @@ export class EventsDashboard extends Component {
                         resolve(Object.assign({}, { event }, { events: [] }))
                     }
                     const eventURL = 'https://cors-anywhere.herokuapp.com/api.smarkets.com/v3/events/?'
-                    const test = eventids.popular_event_ids.map(id => `id=${id}`);
-                    const test2 = test.join('&')
-                    fetch(`${eventURL}${test2}&sort=start_datetime%2Cid`).then(res => res.json()).then(res => resolve(Object.assign({}, { event }, res)))
+                    const idStrings = eventids.popular_event_ids.map(id => `id=${id}`);
+                    const idString = idStrings.join('&')
+                    fetch(`${eventURL}${idString}&sort=start_datetime%2Cid`).then(res => res.json()).then(res => {
+                        resolve(Object.assign({}, { event }, res))
+                        this.props.loader && this.props.toggleLoader();
+                    })
                 })
         })
     }
@@ -76,15 +91,16 @@ export class EventsDashboard extends Component {
     )
 
     setSelectedEvent = (selectedEvent) => {
-       this.props.selectEvent(selectedEvent)
+        this.props.selectEvent(selectedEvent)
     }
 
     nullifySelectedEvent = () => {
-       this.props.deselectEvent();
+        this.props.deselectEvent();
     }
 
 
     componentDidMount() {
+        this.props.toggleLoader()
         this.fetchPopularEventsPerSport()
         setTimeout(() => this.fetchPopularEventsPerSport(), 10000)
     }
@@ -92,7 +108,7 @@ export class EventsDashboard extends Component {
     event = (e, index) => {
         return (
             <Container key={index}>
-                <SubEvent renderBetStatus={this.renderBetStatus} setSelectedEvent={this.setSelectedEvent} event={e} />
+                <EventGroup renderBetStatus={this.renderBetStatus} setSelectedEvent={this.setSelectedEvent} event={e} />
             </Container>
         )
     }
@@ -105,13 +121,7 @@ export class EventsDashboard extends Component {
 
     renderModalHeader = (selectedEvent) => (
         <Modal.Header>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'relative',
-            }}>
+            <ModalHeaderContainer>
                 <div>
                     <h1> {selectedEvent.short_name || selectedEvent.name}</h1>
                 </div>
@@ -127,13 +137,11 @@ export class EventsDashboard extends Component {
                         />
                     </div>
                 </div>
-
-            </div>
+            </ModalHeaderContainer>
         </Modal.Header>
     )
 
     renderModalContent = (selectedEvent) => {
-        console.debug(selectedEvent)
         return (< Modal.Content >
             <div><p> {selectedEvent.startTimeString} </p>
                 {this.renderBetStatus(selectedEvent)('purple')}
@@ -148,11 +156,12 @@ export class EventsDashboard extends Component {
             <FlexMain>
                 {this.renderEvents()}
                 <Modal
-                    open={!!selectedEvent}
+                    open={!!selectedEvent} //expects boolean prop
                 >
-                    {!!selectedEvent && this.renderModalHeader(selectedEvent)}
-                    {!!selectedEvent && this.renderModalContent(selectedEvent)}
+                    {selectedEvent && this.renderModalHeader(selectedEvent)}
+                    {selectedEvent && this.renderModalContent(selectedEvent)}
                 </Modal>
+                <Loader active={this.props.loader}>Loading</Loader>
             </FlexMain>
         )
     }
@@ -160,13 +169,15 @@ export class EventsDashboard extends Component {
 
 const mapStateToProps = (state) => ({
     events: state.eventReducer.get('events'),
-    selectedEvent: state.eventReducer.get('selectedEvent')
+    selectedEvent: state.eventReducer.get('selectedEvent'),
+    loader: state.loader.get('loader'),
 })
 
 const mapDispatchToProps = {
     populateEvents,
     selectEvent,
     deselectEvent,
+    toggleLoader,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventsDashboard)

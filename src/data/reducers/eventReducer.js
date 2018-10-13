@@ -10,6 +10,7 @@ export const initialState = Map({
     selectedEvent: null,
 });
 
+/* ImmutableJS is great for keeping reducers pure */
 export default function eventReducer(state = initialState, action = {}) {
     switch (action.type) {
         case POPULATE_EVENTS:
