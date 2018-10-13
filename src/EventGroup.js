@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components'
-import { Link } from "react-router-dom";
 import moment from 'moment';
 import _ from 'lodash';
 import { Icon } from 'semantic-ui-react'

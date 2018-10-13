@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import EventGroup from './EventGroup'
 import styled from 'styled-components'
-import { Icon, Button, Header, Image, Modal, Loader } from 'semantic-ui-react'
+import { Icon, Modal, Loader } from 'semantic-ui-react'
 
 import {
     populateEvents,
