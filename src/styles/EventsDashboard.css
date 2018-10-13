@@ -1,0 +1,25 @@
+.mainContainer {
+    background: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.modalHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.betStatus {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.eventGroupContainer {
+    width: 100%;
+}

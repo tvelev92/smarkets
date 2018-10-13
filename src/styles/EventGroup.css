@@ -1,0 +1,37 @@
+.eventBox {
+     display: flex;
+     width: 80%;
+     flex-direction: row;
+     margin: 0.5em 1em;
+}
+
+.columnFlex {
+    flex-direction: column;
+    flex: 1;
+}
+
+.colFlexCenter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.nameTimeContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.whiteText {
+    color: white;
+}
+
+.rowFlexCenter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+

@@ -4,25 +4,9 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Icon } from 'semantic-ui-react'
 import { fadeIn } from 'react-animations';
+import './styles/EventGroup.css';
 
 const liveEvent = 'Currently Happening';
-const EventBox = styled.div`
-     border: 2px solid palevioletred;
-     display: flex;
-     width: 80%;
-     flex-direction: row;
-     margin: 0.5em 1em;
-`
-
-const Sub = styled.div`
-    flex-direction: column;
-    flex: 1;
-`
-
-const Test = styled.div`
-    flex-direction: column;
-    width: 100%;
-`
 
 const SubTwo = styled.div`
      background: #242424;
@@ -33,14 +17,6 @@ const SubTwo = styled.div`
        border: 1px solid white;
     }
 `
-
-const NameTimeRow = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-`
-
 const fader = keyframes`${fadeIn}`;
 
 const LiveEvent = styled.div`
@@ -50,10 +26,6 @@ const LiveEvent = styled.div`
     height: 10px;
     border-radius: 50%;
     margin: 0em 1em;
-`
-
-const Title = styled.h1`
-    color: white;
 `
 
 export default class SubEvent extends Component {
@@ -76,41 +48,28 @@ export default class SubEvent extends Component {
         return dateB.getDate() - dateA.getDate();
     }
 
-
-
     renderNameTime = (event) => (
-        <NameTimeRow>
+        <div className='nameTimeContainer'>
             <div>
-                <h3 style={{ color: 'white' }}>
+                <h3 className='whiteText'>
                     {event.short_name || event.name}
                 </h3>
             </div>
             <div>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
+                <div className='rowFlexCenter'>
                     {this.getTime(event) === liveEvent && <LiveEvent />}
                     <div>
-                        <h3 style={{ color: 'white' }}> {this.getTime(event)} </h3>
+                        <h3 className='whiteText'> {this.getTime(event)} </h3>
                     </div>
                 </div>
             </div>
-        </NameTimeRow>
+        </div>
     )
 
     renderNoScheduledEvent = () => (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                textAlign: 'center',
-            }}
+        <div className='colFlexCenter'
         >
-            <h3 style={{ color: 'white' }}> {'Nothing Scheduled'} </h3>
+            <h3 className='whiteText'> {'Nothing Scheduled'} </h3>
         </div>
     )
 
@@ -123,20 +82,13 @@ export default class SubEvent extends Component {
         //const myOrderedArray = _.sortBy(this.props.event.events, event => new Date(event.start_datetime).getTime())
         const myOrderedArray = this.props.event.events;
         return (
-            <EventBox>
-                <Sub>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            textAlign: 'center',
-                        }}
-                    >
-                        <Title> {this.props.event.event.name} </Title>
+            <div className='eventBox'>
+                <div className='columnFlex'>
+                    <div className='colFlexCenter'>
+                        <h1 className = 'whiteText'> {this.props.event.event.name} </h1>
                     </div>
                     {!!this.props.event.events.length ? (
-                        <Test>
+                        <div>
                             {
                                 myOrderedArray.map((event, i) => {
                                     return (
@@ -155,11 +107,11 @@ export default class SubEvent extends Component {
                                         </SubTwo>
                                     )
                                 })}
-                        </Test>
+                        </div>
                     ) : this.renderNoScheduledEvent()
                     }
-                </Sub>
-            </EventBox >
+                </div>
+            </div>
         )
     }
     render() {

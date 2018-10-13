@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Icon, Modal, Loader } from 'semantic-ui-react'
+import './styles/EventsDashboard.css';
 import EventGroup from './EventGroup'
 import styled from 'styled-components'
-import { Icon, Modal, Loader } from 'semantic-ui-react'
 
 import {
     populateEvents,
@@ -14,30 +15,6 @@ import {
     toggleLoader
 } from './data/actions/loaderActions';
 
-
-const Container = styled.div`
-    width: 100%
-`;
-
-const FlexMain = styled.div`
-    background: #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-`
-
-const Name = styled.h3`
-    color: white;
-`
-
-const ModalHeaderContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-`
 
 export class EventsDashboard extends Component {
     fn = (event) => {
@@ -73,23 +50,24 @@ export class EventsDashboard extends Component {
         }
     }
 
-    renderBetStatus = (event) => (color) => (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center'
-        }}>
-            <div>
-                <h3 style={{ color }}> {`Bet status: `} </h3>
+    renderBetStatus = (event) => (color) => {
+        const { bettable } = event;
+        return (
+            <div className='betStatus'>
+                <div>
+                    <h3 style={{ color }}> {`Bet status: `} </h3>
+                </div>
+                <div style={{
+                    margin: '0em 1em',
+                }}>
+                    <Icon
+                        color={`${bettable ? 'green' : 'red'}`}
+                        name={`${bettable ? 'unlock' : 'lock'}`}
+                    />
+                </div>
             </div>
-            <div style={{
-                margin: '0em 1em',
-            }}>
-                <Icon color={`${event.bettable ? 'green' : 'red'}`} name={`${event.bettable ? 'unlock' : 'lock'}`} />
-            </div>
-        </div>
-    )
-
+        )
+    }
     setSelectedEvent = (selectedEvent) => {
         this.props.selectEvent(selectedEvent)
     }
@@ -107,9 +85,12 @@ export class EventsDashboard extends Component {
 
     event = (e, index) => {
         return (
-            <Container key={index}>
+            <div
+                className='eventGroupContainer'
+                key={index}
+            >
                 <EventGroup renderBetStatus={this.renderBetStatus} setSelectedEvent={this.setSelectedEvent} event={e} />
-            </Container>
+            </div>
         )
     }
 
@@ -121,14 +102,12 @@ export class EventsDashboard extends Component {
 
     renderModalHeader = (selectedEvent) => (
         <Modal.Header>
-            <ModalHeaderContainer>
+            <div className='modalHeader'>
                 <div>
                     <h1> {selectedEvent.short_name || selectedEvent.name}</h1>
                 </div>
                 <div style={{ position: 'absolute', top: 0, right: 0 }}>
-                    <div
-                        onClick={this.nullifySelectedEvent}
-                    >
+                    <div onClick={this.nullifySelectedEvent}>
                         <Icon
                             color='red'
                             name='close'
@@ -137,7 +116,7 @@ export class EventsDashboard extends Component {
                         />
                     </div>
                 </div>
-            </ModalHeaderContainer>
+            </div>
         </Modal.Header>
     )
 
@@ -153,7 +132,7 @@ export class EventsDashboard extends Component {
     render() {
         const { selectedEvent } = this.props;
         return (
-            <FlexMain>
+            <div className='mainContainer'>
                 {this.renderEvents()}
                 <Modal
                     open={!!selectedEvent} //expects boolean prop
@@ -162,7 +141,7 @@ export class EventsDashboard extends Component {
                     {selectedEvent && this.renderModalContent(selectedEvent)}
                 </Modal>
                 <Loader active={this.props.loader}>Loading</Loader>
-            </FlexMain>
+            </div>
         )
     }
 }
